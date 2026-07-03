@@ -111,50 +111,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-//    @Transactional
-//    @Override
-//    public Response placeOrder(OrderRequest request) {
-//
-//        // get product from DB
-//        List<Product> products = productRepository.findByProductName(request.getProductName());
-//
-//        if (products.isEmpty()) {
-//            return new Response(Constants.PRODUCT_NOT_FOUND, false, HttpStatus.NOT_FOUND, null);
-//        }
-//
-//        Product product = products.get(0);
-//
-//        // Check stock
-//        if (product.getStock() < request.getQuantity()) {
-//            return new Response("OUT OF STOCK", false, HttpStatus.BAD_REQUEST, null);
-//        }
-//
-//        // reduce stoke
-//        product.setStock(product.getStock() - request.getQuantity());
-//        productRepository.save(product);
-//
-//        Order order = new Order();
-//
-//        order.setProductName(product.getProductName());
-//        order.setQuantity(request.getQuantity());
-//        order.setPrice(product.getPrice());
-//        order.setOrderTotal(product.getPrice() * request.getQuantity());
-//        order.setStatus("PLACED");
-//        order.setOrderDate(LocalDate.now().toString());
-//
-//        orderRepository.save(order);
-//
-//        OrderResponse response = new OrderResponse();
-//        response.setOrderId(order.getId());
-//        response.setProductName(order.getProductName());
-//        response.setQuantity(order.getQuantity());
-//        response.setOrderTotal(order.getOrderTotal());
-//        response.setOrderStatus(order.getStatus());
-//
-//        return new Response(Constants.SUCCESS, true, HttpStatus.CREATED, response);
-//    }
-
-
+    @Transactional
     @Override
     public Response placeOrder(OrderRequest request, Authentication authentication) {
 
@@ -221,3 +178,47 @@ public class OrderServiceImpl implements OrderService {
 
 //“How do you implement My Orders?”
 //Answer should be:👉 “I fetch user from JWT SecurityContext and query orders by userId in repository.”
+
+
+//    @Transactional
+//    @Override
+//    public Response placeOrder(OrderRequest request) {
+//
+//        // get product from DB
+//        List<Product> products = productRepository.findByProductName(request.getProductName());
+//
+//        if (products.isEmpty()) {
+//            return new Response(Constants.PRODUCT_NOT_FOUND, false, HttpStatus.NOT_FOUND, null);
+//        }
+//
+//        Product product = products.get(0);
+//
+//        // Check stock
+//        if (product.getStock() < request.getQuantity()) {
+//            return new Response("OUT OF STOCK", false, HttpStatus.BAD_REQUEST, null);
+//        }
+//
+//        // reduce stoke
+//        product.setStock(product.getStock() - request.getQuantity());
+//        productRepository.save(product);
+//
+//        Order order = new Order();
+//
+//        order.setProductName(product.getProductName());
+//        order.setQuantity(request.getQuantity());
+//        order.setPrice(product.getPrice());
+//        order.setOrderTotal(product.getPrice() * request.getQuantity());
+//        order.setStatus("PLACED");
+//        order.setOrderDate(LocalDate.now().toString());
+//
+//        orderRepository.save(order);
+//
+//        OrderResponse response = new OrderResponse();
+//        response.setOrderId(order.getId());
+//        response.setProductName(order.getProductName());
+//        response.setQuantity(order.getQuantity());
+//        response.setOrderTotal(order.getOrderTotal());
+//        response.setOrderStatus(order.getStatus());
+//
+//        return new Response(Constants.SUCCESS, true, HttpStatus.CREATED, response);
+//    }

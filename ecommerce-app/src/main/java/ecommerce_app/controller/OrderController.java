@@ -31,9 +31,7 @@ public class OrderController {
 
     @GetMapping("/myOrders")
     public ResponseEntity<Response> getAllOrders() {
-
         Response response = orderService.getAllOrders();
-
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }
