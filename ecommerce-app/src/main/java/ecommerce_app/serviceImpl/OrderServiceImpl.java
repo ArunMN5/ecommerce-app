@@ -97,6 +97,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -143,6 +144,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPrice(product.getPrice());
         order.setOrderTotal(product.getPrice() * request.getQuantity());
         order.setStatus("PLACED");
+        order.setUser(user);       //imp GET ORDERS BASED ON PERTICULAR USER ONLY
         order.setOrderDate(LocalDate.now().toString());
 
         orderRepository.save(order);
@@ -163,13 +165,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Response getAllOrders() {
+        //THIS WILL EXTRACT USER EMAIL FOR JWT TOKEN AND VERIFY HERE TO GET ORDERS OF PERTICULAR USER
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
 
-        List<Order> orders = orderRepository.findAll();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Order> orders = orderRepository.findByUser(user);//THIS WILL RETURN ALL ORDERS BASED ON SAME USER ID ONLY
         List<OrderResponse> list = new ArrayList<>();
 
         for (Order o : orders) {
 
             OrderResponse r = new OrderResponse();
+
             r.setOrderId(o.getId());
             r.setProductName(o.getProductName());
             r.setQuantity(o.getQuantity());
@@ -183,6 +192,33 @@ public class OrderServiceImpl implements OrderService {
         return new Response(Constants.SUCCESS, true, HttpStatus.OK, list);
 
     }
+
+
+ //   @Override
+//    public Response getAllOrders() {
+//
+//        List<Order> orders = orderRepository.findByUser(user);
+//       // List<Order> orders = orderRepository.findAll();
+//        List<OrderResponse> list = new ArrayList<>();
+//
+//        for (Order o : orders) {
+//
+//            OrderResponse r = new OrderResponse();
+//            r.setOrderId(o.getId());
+//            r.setProductName(o.getProductName());
+//            r.setQuantity(o.getQuantity());
+//            r.setOrderDate(o.getOrderDate());
+//            r.setOrderTotal(o.getOrderTotal());
+//            r.setOrderStatus(o.getStatus());
+//
+//            list.add(r);
+//        }
+//
+//        return new Response(Constants.SUCCESS, true, HttpStatus.OK, list);
+//
+//    }
+
+
 }
 
 //“How do you implement My Orders?”

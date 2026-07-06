@@ -6,13 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Integer> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
-   // List<Order> findByUserEmail(String userEmail);
 
-   // Optional<User> findByEmail(String email);
+    List<Order> findByUser(User user);
+
+    // Optional<User> findByEmail(String email);
+
+    // List<Order> findByUserEmail(String userEmail);
 
 }
