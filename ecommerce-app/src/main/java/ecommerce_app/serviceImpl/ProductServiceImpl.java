@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     // private final Constants constants;
-     //  private final Response response;
+    //  private final Response response;
 
 
     @Override
@@ -44,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
 
         //entity -> response
         ProductResponse productResponse = new ProductResponse();
+
         productResponse.setId(product.getId());
         productResponse.setProductName(product.getProductName());
         productResponse.setBrandName(product.getBrandName());
@@ -55,25 +57,55 @@ public class ProductServiceImpl implements ProductService {
         return new Response(Constants.SUCCESS, true, HttpStatus.CREATED, productResponse);
     }
 
+//    @Override
+//    public Response getAllProducts() { //this will return only one product
+//
+//        List<Product> products = productRepository.findAll();
+//
+//        ProductResponse productResponse = new ProductResponse();
+//
+//        productResponse.setId(products.get(1).getId());
+//        productResponse.setProductName(products.get(1).getProductName());
+//        productResponse.setBrandName(products.get(1).getBrandName());
+//        productResponse.setPrice(products.get(1).getPrice());
+//        productResponse.setStock(products.get(1).getStock());
+//        productResponse.setDate(products.get(1).getDate());
+//
+//
+//        Response response = new Response();
+//        response.setMessage(Constants.SUCCESS);
+//        response.setStatus(true);
+//        response.setHttpStatus(HttpStatus.OK);
+//        response.setData(productResponse);
+//
+//        return response;
+//    }
+
     @Override
-    public Response getAllProducts() {
+    public Response getAllProducts() { //it will print all the products in db
 
         List<Product> products = productRepository.findAll();
 
-//        ProductResponse productResponse = new ProductResponse();
-//
-//        productResponse.setId(product.get().getId());
-//        productResponse.setProductName(product.get().getProductName());
-//        productResponse.setBrandName(product.get().getBrandName());
-//        productResponse.setPrice(product.get().getPrice());
-//        productResponse.setStock(product.get().getStock());
-//        productResponse.setDate(product.get().getDate());
+        List<ProductResponse> productResponses = new ArrayList<>();
+
+        for (Product product : products) {
+            ProductResponse productResponse = new ProductResponse();
+
+            productResponse.setId(product.getId());
+            productResponse.setProductName(product.getProductName());
+            productResponse.setBrandName(product.getBrandName());
+            productResponse.setPrice(product.getPrice());
+            productResponse.setStock(product.getStock());
+            productResponse.setDate(product.getDate());
+
+            productResponses.add(productResponse);
+        }
 
         Response response = new Response();
         response.setMessage(Constants.SUCCESS);
         response.setStatus(true);
         response.setHttpStatus(HttpStatus.OK);
-        response.setData(products);
+        response.setData(productResponses);
 
         return response;
     }
@@ -114,6 +146,14 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findByProductName(productName);
         return new Response(Constants.SUCCESS, true, HttpStatus.OK, products);
     }
+
+    @Override
+    public Response findByProductNameContainingIgnoreCase(String productName) {
+
+        List<Product> products = productRepository.findByProductNameContainingIgnoreCase(productName);
+        return new Response(Constants.SUCCESS, true, HttpStatus.OK, products);
+    }
+
 
     @Override
     public Response updateProduct() {

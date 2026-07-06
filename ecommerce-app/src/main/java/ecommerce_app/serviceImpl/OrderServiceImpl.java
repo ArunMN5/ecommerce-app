@@ -81,7 +81,7 @@
 //}
 
 package ecommerce_app.serviceImpl;
-import java.util.Optional;
+
 import ecommerce_app.dto.Response;
 import ecommerce_app.dto.request.OrderRequest;
 import ecommerce_app.dto.response.OrderResponse;
@@ -115,8 +115,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Response placeOrder(OrderRequest request, Authentication authentication) {
 
-            // Get logged-in user email from JWT
-            String email = authentication.getName();
+        // Get logged-in user email from JWT
+        String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -125,31 +125,40 @@ public class OrderServiceImpl implements OrderService {
                 .stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            // Stock check
-            if (product.getStock() < request.getQuantity()) {
-                return new Response("OUT OF STOCK", false, HttpStatus.BAD_REQUEST, null);
-            }
-
-            // Reduce stock
-            product.setStock(product.getStock() - request.getQuantity());
-            productRepository.save(product);
-
-            // Create order
-            Order order = new Order();
-            order.setUser(user);              // this will map user with id ,to know who ordered
-            order.setProductName(product.getProductName());
-            order.setQuantity(request.getQuantity());
-
-            order.setPrice(product.getPrice());
-            order.setOrderTotal(product.getPrice() * request.getQuantity());
-            order.setStatus("PLACED");
-            order.setOrderDate(LocalDate.now().toString());
-
-            orderRepository.save(order);
-
-            return new Response("ORDER PLACED", true, HttpStatus.CREATED, null);
+        // Stock check
+        if (product.getStock() < request.getQuantity()) {
+            return new Response("OUT OF STOCK", false, HttpStatus.BAD_REQUEST, null);
         }
 
+        // Reduce stock
+        product.setStock(product.getStock() - request.getQuantity());
+        productRepository.save(product);
+
+        // Create order
+        Order order = new Order();
+        order.setUser(user);              // this will map user with id ,to know who ordered
+        order.setProductName(product.getProductName());
+        order.setQuantity(request.getQuantity());
+
+        order.setPrice(product.getPrice());
+        order.setOrderTotal(product.getPrice() * request.getQuantity());
+        order.setStatus("PLACED");
+        order.setOrderDate(LocalDate.now().toString());
+
+        orderRepository.save(order);
+
+        //THIS WILL RETURN RESPONSE TO USER CONSOLE AFTER ORDER PLACED
+        OrderResponse response = new OrderResponse();
+
+        response.setOrderId(order.getId());
+        response.setProductName(order.getProductName());
+        response.setQuantity(order.getQuantity());
+        response.setOrderDate(order.getOrderDate());
+        response.setOrderTotal(order.getOrderTotal());
+        response.setOrderStatus(order.getStatus());
+
+        return new Response("ORDER PLACED", true, HttpStatus.CREATED, response);
+    }
 
 
     @Override
