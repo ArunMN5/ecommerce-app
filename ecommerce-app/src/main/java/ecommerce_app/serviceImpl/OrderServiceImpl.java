@@ -96,6 +96,7 @@ import ecommerce_app.util.Constants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -165,6 +166,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Response getAllOrders() {
+
         //THIS WILL EXTRACT USER EMAIL FOR JWT TOKEN AND VERIFY HERE TO GET ORDERS OF PERTICULAR USER
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -188,9 +190,14 @@ public class OrderServiceImpl implements OrderService {
 
             list.add(r);
         }
-
         return new Response(Constants.SUCCESS, true, HttpStatus.OK, list);
 
+    }
+
+    @Override
+    public Order getOrder(Long orderId) { //GETMAPPING ALSO PASS DATA USING PATHVARIABLE OR QUERY TO GET DATA
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
     }
 
 

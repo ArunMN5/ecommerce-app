@@ -2,6 +2,7 @@ package ecommerce_app.controller;
 
 import ecommerce_app.dto.Response;
 import ecommerce_app.dto.request.OrderRequest;
+import ecommerce_app.entity.Order;
 import ecommerce_app.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,4 +36,11 @@ public class OrderController {
         Response response = orderService.getAllOrders();
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
+    //GETMAPPING ALSO PASS DATA USING PATHVARIABLE OR QUERY TO GET DATA
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<Order> getOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrder(orderId));
+    }
+
 }
